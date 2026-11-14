@@ -26,6 +26,10 @@ if [[ -f "$wow/.build.info" ]] && ! awk -F '|' '
     exit 1
 fi
 grep -Fxq '## OptionalDeps: ZygorGuidesViewerForever' "$toc"
+if ! grep -Fxq '## IconTexture: Interface\AddOns\ZygorForeverSkin\Media\Icon.tga' "$toc" || [[ ! -s Media/Icon.tga ]]; then
+    echo 'IconTexture fehlt in der TOC oder die zugehörige Icon-Datei fehlt.' >&2
+    exit 1
+fi
 if grep -Ei '^##[[:space:]]*(Dependencies|RequiredDeps|SavedVariables(PerCharacter)?):' "$toc"; then
     echo 'Unerwartete Abhängigkeit oder SavedVariables in der TOC.' >&2
     exit 1

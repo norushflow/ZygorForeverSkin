@@ -1,3 +1,8 @@
+## v0.1.1
+
+- Added a bronze compass icon to the in-game AddOns list.
+- Added an attribution notice identifying the skin as an independent, unofficial project for Zygor Guide Viewer.
+
 ## v0.1.0
 
 First release for World of Warcraft Forever 1.60.1 and Zygor Guide Viewer Forever 1.6.

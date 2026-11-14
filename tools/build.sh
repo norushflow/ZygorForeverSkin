@@ -27,6 +27,7 @@ trap 'rm -rf -- "$stage"' EXIT
 mkdir -- "$stage/$addon"
 mapfile -t runtime < <(awk 'NF && $1 !~ /^#/ {print}' "$toc")
 cp -- "$toc" "${runtime[@]}" README.md "$stage/$addon/"
+install -D -m 0644 -- Media/Icon.tga "$stage/$addon/Media/Icon.tga"
 (
     cd -- "$stage"
     export LC_ALL=C TZ=UTC
