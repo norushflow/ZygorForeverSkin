@@ -16,6 +16,12 @@ addon=ZygorForeverSkin
 toc="$addon.toc"
 version=$(awk '/^## Version:/ {print $3; exit}' "$toc")
 [[ $version =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Ungültige Version in der TOC.' >&2; exit 1; }
+[[ $(grep -c '^## Version:' "$toc") == 1 ]] || { echo 'Doppelte Version in der TOC.' >&2; exit 1; }
+awk -v version="$version" '
+    /^## / { active = ($0 == "## v" version); if (active) sections++; next }
+    active && /^- [^[:space:]]/ { bullets++ }
+    END { exit !(sections == 1 && bullets > 0) }
+' RELEASE_NOTES.md || { echo "Release-Notizen für v$version fehlen oder sind mehrdeutig." >&2; exit 1; }
 output=$(realpath -m -- "$output")
 out="$output/$addon-$version.zip"
 [[ ! -e $out && ! -L $out ]] || { printf 'ZIP existiert bereits: %s\n' "$out" >&2; exit 1; }
@@ -35,6 +41,10 @@ install -D -m 0644 -- Media/Icon.tga "$stage/$addon/Media/Icon.tga"
     find "$addon" -type f -exec touch -t 198001010000.00 {} +
     find "$addon" -type f -print | sort | ZIPOPT= zip -q -X -9 addon.zip -@
     unzip -tq addon.zip
+    diff -q <(find "$addon" -type f -print | sort) <(unzip -Z -1 addon.zip | sort) >/dev/null ||
+        { echo 'ZIP-Inhalt stimmt nicht mit den geprüften Paketdateien überein.' >&2; exit 1; }
+    unzip -p addon.zip "$addon/$toc" | cmp -s "$addon/$toc" - ||
+        { echo 'TOC im ZIP stimmt nicht überein.' >&2; exit 1; }
 )
 ln -T -- "$stage/addon.zip" "$out"
 printf 'Installations-ZIP: %s\n' "$out"

@@ -1,3 +1,8 @@
+## v0.1.2
+
+- Add Wago project metadata and CurseForge package configuration.
+- Strengthen release package validation; the in-game skin is unchanged.
+
 ## v0.1.1
 
 - Added a bronze compass icon to the in-game AddOns list.

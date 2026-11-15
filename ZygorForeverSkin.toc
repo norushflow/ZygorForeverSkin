@@ -4,7 +4,9 @@
 ## Notes: A warm, subdued visual theme for the Zygor guide viewer on WoW Forever.
 ## Notes-deDE: Dunkles, bronzefarbenes Design für den Zygor-Guideviewer in WoW Forever.
 ## Author: norushflow
-## Version: 0.1.1
+## Version: 0.1.2
+## X-Curse-Project-ID: 1804033
+## X-Wago-ID: j6jAexNR
 ## OptionalDeps: ZygorGuidesViewerForever
 
 Style.lua
