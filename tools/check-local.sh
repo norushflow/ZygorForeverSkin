@@ -3,30 +3,11 @@ set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 
 wow=${1:-/home/norushflow/Games/World of Warcraft}
-zyg="$wow/_forever_/Interface/AddOns/ZygorGuidesViewerForever"
 toc=ZygorForeverSkin.toc
-zygortoc="$zyg/ZygorGuidesViewerForever.toc"
-
 command -v luajit >/dev/null || { echo 'LuaJIT fehlt.' >&2; exit 1; }
-if [[ ! -f $zygortoc ]]; then
-    printf 'Zygor-TOC für den Integrationstest fehlt: %s\n' "$zygortoc" >&2
-    exit 1
-fi
-interface=$(awk '/^## Interface:/ {print $3; exit}' "$toc")
-zygor_interface=$(awk '/^## Interface:/ {sub(/\r$/, ""); print $3; exit}' "$zygortoc")
-[[ $(grep -c '^## Interface:' "$toc") == 1 ]] || { echo 'Doppeltes Interface in der TOC.' >&2; exit 1; }
-if [[ $interface != 16001 || $interface != "$zygor_interface" ]]; then
-    echo 'Interface von Skin und installiertem Zygor passt nicht zu Forever 1.60.1.' >&2
-    exit 1
-fi
-if [[ -f "$wow/.build.info" ]] && ! awk -F '|' '
-    $2 == 1 && $NF == "wowf" && $(NF-2) ~ /^1\.60\.1\./ { found=1 }
-    END { exit !found }
-' "$wow/.build.info"; then
-    echo 'In .build.info fehlt der aktive Forever-Client 1.60.1.' >&2
-    exit 1
-fi
-grep -Fxq '## OptionalDeps: ZygorGuidesViewerForever' "$toc"
+grep -Fxq '## Interface: 120105, 16001' "$toc"
+[[ $(grep -c '^## Interface:' "$toc") == 1 ]]
+grep -Fxq '## OptionalDeps: ZygorGuidesViewer, ZygorGuidesViewerForever, ZygorRetailSkin' "$toc"
 grep -Fxq '## X-Curse-Project-ID: 1804033' "$toc"
 grep -Fxq '## X-Wago-ID: j6jAexNR' "$toc"
 [[ $(grep -Ec '^## (X-Curse-Project-ID|X-Wago-ID):' "$toc") == 2 ]] ||
@@ -64,5 +45,14 @@ fi
 luajit - "${runtime[@]}" tests/test_skin.lua <<'LUA'
 for _, path in ipairs(arg) do assert(loadfile(path)) end
 LUA
-luajit tests/test_skin.lua "$zyg"
-printf 'ZygorForeverSkin OK (Interface %s, %s Laufzeitdateien)\n' "$interface" "${#runtime[@]}"
+for client in retail forever; do
+    if [[ $client == retail ]]; then zygor=ZygorGuidesViewer; interface=120105
+    else zygor=ZygorGuidesViewerForever; interface=16001; fi
+    zyg="$wow/_${client}_/Interface/AddOns/$zygor"
+    zygortoc="$zyg/$zygor.toc"
+    [[ -f $zygortoc ]] || { printf 'Zygor-Referenz fehlt: %s\n' "$zygortoc" >&2; exit 1; }
+    installed_interface=$(awk '/^## Interface:/ {sub(/\r$/, ""); print $3; exit}' "$zygortoc")
+    [[ $installed_interface == "$interface" ]] || { echo "Interface passt nicht: $client" >&2; exit 1; }
+    luajit tests/test_skin.lua "$zyg" "$client"
+done
+printf 'ZygorForeverSkin OK (Retail + Forever, %s Laufzeitdateien)\n' "${#runtime[@]}"

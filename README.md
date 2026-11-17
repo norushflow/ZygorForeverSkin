@@ -1,18 +1,20 @@
-# Zygor Forever Skin
+# Zygor Skin (Retail & Forever)
 
-Zygor Forever Skin gives the Zygor Guide Viewer on World of Warcraft Forever a dark bronze theme inspired by ForeverBuddy. The skin uses Zygor's own interface, leaving guide selection, quest progress, navigation, and settings in Zygor's hands.
+Zygor Forever Skin gives the Zygor Guide Viewer on World of Warcraft Retail and Forever a dark bronze theme inspired by ForeverBuddy. The skin uses Zygor's own interface, leaving guide selection, quest progress, navigation, and settings in Zygor's hands.
 
 ## Compatibility
 
-Built for WoW Forever **1.60.1** (interface 16001, build 70938) and checked against **Zygor Guide Viewer Forever 1.6** (revision 37602). Install and enable `ZygorGuidesViewerForever` separately. The skin works independently of ForeverBuddy and ForeverBuddyUI.
+Supports Retail (interface **120105**, Zygor 9.6) and Forever (interface **16001**, Zygor Forever 1.6). Install the matching Zygor viewer separately. One shared codebase and ZIP; independent of the Buddy addons.
 
 ## Installation
 
 1. Download the installation ZIP from [Releases](https://github.com/norushflow/ZygorForeverSkin/releases).
-2. Extract the `ZygorForeverSkin` folder into `_forever_/Interface/AddOns/`.
-3. Enable **Zygor Forever Skin** and **Zygor Guide Viewer (Forever)** in the AddOns menu. If WoW is open, enter `/reload` in chat.
+2. Extract the `ZygorForeverSkin` folder into `_retail_/Interface/AddOns/` or `_forever_/Interface/AddOns/`.
+3. Enable **Zygor Skin** and the matching **Zygor Guide Viewer** in the AddOns menu. If WoW is open, enter `/reload` in chat.
 
-To restore Zygor's original look, disable **Zygor Forever Skin** and run `/reload`.
+To restore Zygor's original look, disable **Zygor Skin** and run `/reload`.
+
+If you previously installed `ZygorRetailSkin`, remove or disable it before enabling this addon and reload. The folder stays named `ZygorForeverSkin` to preserve existing update links.
 
 ## What the skin covers
 
@@ -26,10 +28,17 @@ Zygor Forever Skin is an independent, unofficial skin for Zygor Guide Viewer. Zy
 
 ## Local checks and build
 
-With LuaJIT, ZIP tools, and Zygor Guide Viewer Forever installed, run `./tools/check-local.sh` to check the TOC, Lua syntax, and all four built-in Zygor styles. The tests simulate loading, reload, guide windows created on demand, combat deferral, protected frames, and a missing Zygor installation.
+With LuaJIT, ZIP tools, and both Zygor client versions installed, run `./tools/check-local.sh` to check the TOC, Lua syntax, and all four built-in Zygor styles in both clients. The tests simulate loading, reload, guide windows created on demand, combat deferral, protected frames, and a missing Zygor installation.
 
-Run `./tools/build.sh` to check and build the installable ZIP. For a local client test, run `./tools/spieltest.sh ZygorForeverSkin` from the parent WoW addon project in the Fedora terminal. WoW can stay open. Once installation succeeds, enter `/reload` in WoW chat and check the skin.
+Run `./tools/build.sh` to check and build the installable ZIP. For a local client test, run `./tools/spieltest.sh ZygorForeverSkin-Retail` or `./tools/spieltest.sh ZygorForeverSkin-Forever` from the parent WoW addon project in the Fedora terminal. WoW can stay open. Once installation succeeds, enter `/reload` in WoW chat and check the skin.
 
-Publish only when explicitly requested. The full check requires the locally installed Zygor reference. For Wago, `wago-release.yml` defaults to a dry run; after checking the version is absent, use `dry_run=false` and `confirm_new=<tag>` with the `WAGO_API_TOKEN` GitHub secret and a `WAGO_PROJECT_ID` variable matching the TOC. If an upload has an uncertain outcome, check Wago and use the displayed `recover_status_id` only when the version is absent. Verify GitHub, CurseForge and Wago separately.
+## Release
 
-The CurseForge webhook can package a pushed tag using `.pkgmeta` and `RELEASE_NOTES.md`. Check published and pending files before any manual upload to avoid duplicates.
+Publish only on an explicit request; failed checks block publication. Reuse a confirmed client test of the same code.
+
+1. Check the remote; update the TOC version and `RELEASE_NOTES.md`.
+2. Run `./tools/build.sh` once with the installed Zygor reference; it includes the full check. Commit/push the changes and publish the matching GitHub tag/release with that ZIP. Confirm the commit and ZIP once.
+3. CurseForge: check webhook-created files, including pending files. `.pkgmeta` uses `RELEASE_NOTES.md` as the changelog. Upload manually only if the version is absent and no upload is running. Report pending moderation without waiting.
+4. Wago: check the project and that the version is absent, then run `wago-release.yml` once with `tag=<tag>`, `dry_run=false`, `confirm_new=<tag>`. Report GitHub, CurseForge and Wago separately.
+
+Wago requires secret `WAGO_API_TOKEN` and variable `WAGO_PROJECT_ID` matching the TOC. Dry run remains the default; an unchanged, verified setup needs no extra dry run. For an uncertain upload, check the platform first; use `recover_status_id` only if the version is confirmed absent. Never retry blindly or expose secrets.

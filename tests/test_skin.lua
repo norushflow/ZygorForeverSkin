@@ -1,8 +1,11 @@
-local target = "ZygorGuidesViewerForever"
+local retail = arg[2] == "retail"
+WOW_PROJECT_MAINLINE = 1
+WOW_PROJECT_ID = retail and 1 or 99
+local target = retail and "ZygorGuidesViewer" or "ZygorGuidesViewerForever"
 local skinName = "ZygorForeverSkin"
 local installed = assert(arg[1], "Zygor installation path required")
 local locale, combat = "deDE", false
-local expressway = "Interface\\AddOns\\Foreverbuddy\\Media\\Expressway.ttf"
+local expressway = "Interface\\AddOns\\" .. (retail and "AzerothBuddy" or "Foreverbuddy") .. "\\Media\\Expressway.ttf"
 local clientFont = "Fonts\\FRIZQT__.TTF"
 local availableFont = expressway
 local eventFrame
@@ -189,7 +192,7 @@ local function createZygor()
     end
 
     local addon = {
-        name=target, IsForever=true, Font="OpenSans.ttf", FontBold="OpenSansB.ttf",
+        name=target, IsForever=not retail, IsRetail=retail, Font="OpenSans.ttf", FontBold="OpenSansB.ttf",
         GuideMenu=menu, Tabs=tabs, db={profile={skin="default", skinstyle="stealth"}},
         Pointer={ArrowSkins={Starlight={options={ar=1}}, Stealth={options={ar=1}}}, Icons={mapmarker={tex={}}}},
     }
@@ -213,6 +216,32 @@ end
 local _, absentEvents = loadSkin()
 absentEvents:Fire("ADDON_LOADED", skinName)
 assert(hooks == 0 and not absentEvents.events.PLAYER_REGEN_ENABLED)
+
+-- Wrong-client viewers must remain untouched.
+ZGV = createZygor()
+ZGV.IsRetail, ZGV.IsForever = not retail, retail
+local _, wrongEvents = loadSkin()
+wrongEvents:Fire("ADDON_LOADED", skinName)
+assert(hooks == 0 and wrongEvents.events.ADDON_LOADED)
+ZGV = nil
+
+-- Support the viewer loading after the skin, without installing twice.
+local _, lateEvents = loadSkin()
+lateEvents:Fire("ADDON_LOADED", skinName)
+ZGV = createZygor()
+lateEvents:Fire("ADDON_LOADED", target)
+assert(not lateEvents.events.ADDON_LOADED and ZGV.Font == expressway)
+local oldHooks = hooks
+lateEvents:Fire("ADDON_LOADED", target)
+assert(hooks == oldHooks)
+
+if retail then
+    C_AddOns = {IsAddOnLoaded=function(name) return name == "ZygorRetailSkin" end}
+    local _, duplicateEvents = loadSkin()
+    duplicateEvents:Fire("ADDON_LOADED", skinName)
+    assert(hooks == oldHooks, "standalone Retail skin must not receive duplicate hooks")
+    C_AddOns = nil
+end
 
 local zygor, skin, viewer, createMenu, clickCount = createZygor()
 ZGV = zygor
@@ -287,4 +316,4 @@ assert(ZGV.Font == "OpenSans.ttf")
 ZGV, skin = createZygor()
 assert(ZGV.Font == "OpenSans.ttf" and ZGV.db.profile.skinstyle == "stealth")
 assert(not skin:GetStyle("stealth"):GetProp("StyleAceGUI"))
-print("Zygor Forever Skin: load, built-in styles, visuals, combat deferral and independent reload OK")
+print((retail and "Retail: " or "Forever: ") .. "Zygor Skin: load, built-in styles, visuals, combat deferral and independent reload OK")

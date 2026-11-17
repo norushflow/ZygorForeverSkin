@@ -1,3 +1,9 @@
+## v0.1.3
+
+- Support Retail and Forever in one addon and one installation ZIP.
+- Automatically select the matching Zygor viewer and Buddy font paths.
+- Prevent duplicate skin hooks when the former ZygorRetailSkin is still loaded.
+
 ## v0.1.2
 
 - Add Wago project metadata and CurseForge package configuration.

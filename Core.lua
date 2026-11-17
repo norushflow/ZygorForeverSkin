@@ -1,5 +1,8 @@
 local addonName, ns = ...
-local zygorName = "ZygorGuidesViewerForever"
+local retail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+local zygorName = retail and "ZygorGuidesViewer" or "ZygorGuidesViewerForever"
+local buddy = retail and "AzerothBuddy" or "Foreverbuddy"
+local buddyUI = retail and "AzerothBuddyUI" or "Foreverbuddyui"
 local color = ns.color
 local font
 local zygor
@@ -23,8 +26,8 @@ local function findFont()
 
     local probe = CreateFont(addonName .. "FontProbe")
     for _, candidate in ipairs({
-        "Interface\\AddOns\\Foreverbuddy\\Media\\Expressway.ttf",
-        "Interface\\AddOns\\Foreverbuddyui\\Media\\Expressway.ttf",
+        "Interface\\AddOns\\" .. buddy .. "\\Media\\Expressway.ttf",
+        "Interface\\AddOns\\" .. buddyUI .. "\\Media\\Expressway.ttf",
         "Fonts\\FRIZQT__.TTF",
     }) do
         -- Font objects may return nil on success. Missing files can raise.
@@ -209,7 +212,13 @@ end
 
 local function install()
     local addon = _G.ZGV
-    if not addon or addon.name ~= zygorName or not addon.IsForever then return end
+    if not addon or addon.name ~= zygorName then return end
+    if retail and not addon.IsRetail or not retail and not addon.IsForever then return end
+    -- Avoid stacking hooks when the former standalone Retail skin is still enabled.
+    if retail and C_AddOns and C_AddOns.IsAddOnLoaded("ZygorRetailSkin") then
+        print("Zygor Skin: Bitte ZygorRetailSkin deaktivieren und /reload ausführen.")
+        return
+    end
     if not addon.Skins or type(addon.Skins.GetSkin) ~= "function" then return end
     local skin = addon.Skins:GetSkin("default")
     if not skin or type(skin.CreateFrame) ~= "function" or type(skin.GetStyle) ~= "function" then return end

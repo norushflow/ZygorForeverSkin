@@ -1,13 +1,13 @@
-## Interface: 16001
-## Title: Zygor Forever Skin
+## Interface: 120105, 16001
+## Title: Zygor Skin
 ## IconTexture: Interface\AddOns\ZygorForeverSkin\Media\Icon.tga
-## Notes: A warm, subdued visual theme for the Zygor guide viewer on WoW Forever.
-## Notes-deDE: Dunkles, bronzefarbenes Design für den Zygor-Guideviewer in WoW Forever.
+## Notes: A warm, subdued visual theme for the Zygor guide viewer on WoW Retail and Forever.
+## Notes-deDE: Dunkles, bronzefarbenes Design für den Zygor-Guideviewer in WoW Retail and Forever.
 ## Author: norushflow
-## Version: 0.1.2
+## Version: 0.1.3
 ## X-Curse-Project-ID: 1804033
 ## X-Wago-ID: j6jAexNR
-## OptionalDeps: ZygorGuidesViewerForever
+## OptionalDeps: ZygorGuidesViewer, ZygorGuidesViewerForever, ZygorRetailSkin
 
 Style.lua
 Core.lua
