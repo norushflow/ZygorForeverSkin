@@ -1,6 +1,10 @@
 # Zygor Skin (Retail & Forever)
 
+<p align="center"><img src="branding/icon.png" width="144" height="144" alt="ZygorForeverSkin icon"></p>
+
 Zygor Forever Skin gives the Zygor Guide Viewer on World of Warcraft Retail and Forever a dark bronze theme inspired by ForeverBuddy. The skin uses Zygor's own interface, leaving guide selection, quest progress, navigation, and settings in Zygor's hands.
+
+[Wago](https://addons.wago.io/addons/zygorforeverskin) · [GitHub Releases](https://github.com/norushflow/ZygorForeverSkin/releases)
 
 ## Compatibility
 
